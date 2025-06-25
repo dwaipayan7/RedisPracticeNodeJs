@@ -28,9 +28,13 @@ app.get("/api/products", async (req, res) => {
     const cachedProducts = await client.get(key);
 
     if (cachedProducts) {
+      console.log("Cache hit for key:", key);
+      
         res.json(JSON.parse(cachedProducts));
         return;
     }
+
+  console.log("Cache miss for key:", key);
 
 
   const query = {};
@@ -42,9 +46,7 @@ app.get("/api/products", async (req, res) => {
   const products = await Product.find(query);
 
   if (products.length) {
-    await client.set(key, JSON.stringify(products), {
-     // EX: 60, // Cache for 60 seconds
-    });
+    await client.set(key, JSON.stringify(products));
     
   }
 
